@@ -22,14 +22,6 @@ public class Adres {
 
 
     // Getters and Setters
-    // Id
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     // Straat
     public String getStraat() {
@@ -50,11 +42,11 @@ public class Adres {
     }
 
     // Postcode
-    public int getPostcode() {
+    public String getPostcode() {
         return postcode;
     }
 
-    public void setPostcode(int postcode) {
+    public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
 
