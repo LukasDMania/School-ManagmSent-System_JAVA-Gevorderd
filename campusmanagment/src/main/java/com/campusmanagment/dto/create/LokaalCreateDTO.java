@@ -1,62 +1,43 @@
-package com.campusmanagment.model;
+package com.campusmanagment.dto.create;
 
 import com.campusmanagment.util.LokaalType;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 
-import java.util.List;
+public class LokaalCreateDTO {
 
-@Entity
-@Table()
-public class Lokaal {
-
-    //Fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    // Fields
     @NotBlank(message = "Lokaal naam mag niet leeg zijn")
     @Size(max = 100, message = "Lokaal naam moet korter zijn dan 100 tekens")
-    @Column(name = "lokaal_naam", nullable = false, length = 100)
     private String lokaalNaam;
 
     @NotNull(message = "Lokaal type moet worden opgegeven")
     @Enumerated(EnumType.STRING)
-    @Column(name = "lokaal_type", nullable = false)
     private LokaalType lokaalType;
 
     @Positive(message = "Capaciteit moet een positief getal zijn")
     @Max(value = 1000, message = "Capaciteit mag niet meer dan 1000 zijn")
-    @Column(name = "capaciteit", nullable = false)
     private int capaciteit;
 
     @Min(value = -100, message = "Verdieping moet tussen -100 en 100 liggen")
     @Max(value = 100, message = "Verdieping moet tussen -100 en 100 liggen")
-    @Column(name = "verdieping", nullable = false)
     private int verdieping;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "campus_id", nullable = false)
-    @NotNull(message = "Campus moet worden opgegeven")
-    private Campus campus;
-
-    @ManyToMany(mappedBy = "lokalen", fetch = FetchType.LAZY)
-    private List<Reservatie> reservaties;
+    @NotNull
+    private Long campusId;
 
     // Constructors
-    public Lokaal(){};
-    public Lokaal(String lokaalNaam, LokaalType lokaalType, int capaciteit, int verdieping){
-        setLokaalNaam(lokaalNaam);
-        setLokaalType(lokaalType);
-        setCapaciteit(capaciteit);
-        setVerdieping(verdieping);
+    public LokaalCreateDTO() {}
+    public LokaalCreateDTO(String lokaalNaam, LokaalType lokaalType, int capaciteit, int verdieping, Long campusId) {
+        this.lokaalNaam = lokaalNaam;
+        this.lokaalType = lokaalType;
+        this.capaciteit = capaciteit;
+        this.verdieping = verdieping;
+        this.campusId = campusId;
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
     public String getLokaalNaam() {
         return lokaalNaam;
     }
@@ -85,24 +66,22 @@ public class Lokaal {
         this.verdieping = verdieping;
     }
 
-    public Campus getCampus() {
-        return campus;
+    public Long getCampusId() {
+        return campusId;
     }
-    public void setCampus(Campus campus) {
-        this.campus = campus;
+    public void setCampusId(Long campusId) {
+        this.campusId = campusId;
     }
 
     // Override Methods
     @Override
     public String toString() {
-        return "Lokaal{" +
-                "id=" + id +
-                ", lokaalNaam='" + lokaalNaam + '\'' +
+        return "LokaalCreateDTO{" +
+                "lokaalNaam='" + lokaalNaam + '\'' +
                 ", lokaalType=" + lokaalType +
                 ", capaciteit=" + capaciteit +
                 ", verdieping=" + verdieping +
-                ", campus=" + campus +
+                ", campusId=" + campusId +
                 '}';
     }
 }
-

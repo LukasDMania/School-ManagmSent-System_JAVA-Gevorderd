@@ -37,7 +37,7 @@ public class Campus {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "updated_at", updatable = false)
     private LocalDateTime updatedAt;
 
     @OneToMany(
@@ -50,15 +50,20 @@ public class Campus {
 
     // Constructors
     public Campus() {}
-
     public Campus(String name, Adres adres, int parkeerplaatsen) {
-        setCampusNaam(name);
-        setAdres(adres);
-        setParkeerplaatsen(parkeerplaatsen);
+        this.campusNaam = name;
+        this.adres = adres;
+        this.parkeerplaatsen = parkeerplaatsen;
     }
-
-    // For Testing
     public Campus(boolean initializeLokalen){
+        if (initializeLokalen){
+            lokalen = new ArrayList<>();
+        }
+    }
+    public Campus(String name, Adres adres, int parkeerplaatsen, boolean initializeLokalen) {
+        this.campusNaam = name;
+        this.adres = adres;
+        this.parkeerplaatsen = parkeerplaatsen;
         if (initializeLokalen){
             lokalen = new ArrayList<>();
         }
@@ -68,7 +73,6 @@ public class Campus {
     public String getCampusNaam() {
         return campusNaam;
     }
-
     public void setCampusNaam(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Campus naam kan niet null of empty zijn");
@@ -79,7 +83,6 @@ public class Campus {
     public Adres getAdres() {
         return adres;
     }
-
     public void setAdres(Adres adres) {
         this.adres = adres;
     }
@@ -87,7 +90,6 @@ public class Campus {
     public int getParkeerplaatsen() {
         return parkeerplaatsen;
     }
-
     public void setParkeerplaatsen(int parkeerplaatsen) {
         this.parkeerplaatsen = parkeerplaatsen;
     }
@@ -95,7 +97,6 @@ public class Campus {
     public List<Lokaal> getLokalen() {
         return Collections.unmodifiableList(lokalen);
     }
-
     public void setLokalen(List<Lokaal> lokalen) {
         this.lokalen.clear();
         if (lokalen != null) {
@@ -110,11 +111,9 @@ public class Campus {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
     // Business Logic Methods
     public int getAantalLokalen() {
@@ -122,9 +121,9 @@ public class Campus {
     }
 
     public void addLokaal(Lokaal lokaal) {
-        if (lokaal != null) {
-            lokalen.add(lokaal);
-            lokaal.setCampus(this);
+        if (lokaal != null && !lokalen.contains(lokaal)) {
+                lokalen.add(lokaal);
+                lokaal.setCampus(this);
         }
     }
 
@@ -140,8 +139,8 @@ public class Campus {
     public String toString() {
         return "Campus{" +
                 "name='" + campusNaam + '\'' +
-                ", adres=" + adres +
                 ", parkeerplaatsen=" + parkeerplaatsen +
+                ", adres=" + adres +
                 ", aantal lokalen=" + getAantalLokalen() +
                 '}';
     }

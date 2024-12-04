@@ -14,12 +14,12 @@ class CampusTest {
     }
 
     @Test
-    public void testCampusObjectCreation(){
+    void testCampusObjectCreation(){
         assertNotNull(campus, "Campus object should be created");
     }
 
     @Test
-    public void testSetName_throwsIllegalArgumentException_whenNameIsEmptyOrNull(){
+    void testSetName_throwsIllegalArgumentException_whenNameIsEmptyOrNull(){
         // Assert that an IllegalArgumentException is thrown when name is empty
         assertThrows(IllegalArgumentException.class, () -> campus.setCampusNaam(""));
         // Assert that an IllegalArgumentException is thrown when name is null
@@ -27,11 +27,11 @@ class CampusTest {
     }
 
     @Test
-    public void testGetAantalLokalen_returnsZero_whenLokalenListIsNull(){
+    void testGetAantalLokalen_returnsZero_whenLokalenListIsNull(){
         assertEquals(campus.getAantalLokalen(), 0);
     }
     @Test
-    public void testGetAantalLokalen_returnsCorrectCount_whenLokalenCountIsTwo(){
+    void testGetAantalLokalen_returnsCorrectCount_whenLokalenCountIsTwo(){
         Lokaal lokaal1 = new Lokaal();
         Lokaal lokaal2 = new Lokaal();
         campus.addLokaal(lokaal1);
@@ -40,21 +40,46 @@ class CampusTest {
         assertEquals(campus.getAantalLokalen(), 2);
     }
     @Test
-    public void testAddLokaal_doesNotAddLokaal_whenLokaalIsNull(){
+    void testAddLokaal_doesNotAddLokaal_whenLokaalIsNull(){
         campus.addLokaal(null);
         assertEquals(campus.getAantalLokalen(), 0);
     }
+
     @Test
-    public void testAddLokaal_addsLokaalToList_whenAdded(){
+    void testAddLokaal_addsLokaalToList_whenAdded(){
         Lokaal lokaal = new Lokaal();
         campus.addLokaal(lokaal);
         assertTrue(campus.getLokalen().contains(lokaal));
     }
     @Test
-    public void testAddLokaal_addsCampusToLokaal_whenAdded(){
+    void testAddLokaal_doesNotAddLokaalToList_whenLokaalIsAlreadyInList(){
+        Lokaal lokaal = new Lokaal();
+        campus.addLokaal(lokaal);
+        campus.addLokaal(lokaal);
+        assertEquals(campus.getAantalLokalen(), 1);
+    }
+    @Test
+    void testAddLokaal_addsCampusToLokaal_whenAdded(){
         Lokaal lokaal = new Lokaal();
         campus.addLokaal(lokaal);
         assertEquals(lokaal.getCampus(), campus);
     }
+
+    @Test
+    void testRemoveLokaal_removesLokaalFromList_whenLokaalIsInList(){
+        Lokaal lokaal = new Lokaal();
+        campus.addLokaal(lokaal);
+        campus.removeLokaal(lokaal);
+        assertFalse(campus.getLokalen().contains(lokaal));
+    }
+    @Test
+    void testRemoveLokaal_doesNotRemoveLokaalFromList_whenLokaalIsNotInList(){
+        Lokaal lokaal = new Lokaal();
+        Lokaal lokaal1 = new Lokaal();
+        campus.addLokaal(lokaal1);
+        campus.removeLokaal(lokaal);
+        assertEquals(campus.getAantalLokalen(), 1);
+    }
+
 
 }
