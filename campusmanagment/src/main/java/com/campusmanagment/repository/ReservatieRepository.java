@@ -1,0 +1,10 @@
+package com.campusmanagment.repository;
+
+import com.campusmanagment.model.Reservatie;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ReservatieRepository extends JpaRepository<Reservatie, Long> {
+    
+}

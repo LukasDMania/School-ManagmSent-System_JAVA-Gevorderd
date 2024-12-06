@@ -13,12 +13,23 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface LokaalMapper {
 
-    CampusMapper INSTANCE = Mappers.getMapper(CampusMapper.class);
+    LokaalMapper INSTANCE = Mappers.getMapper(LokaalMapper.class);
 
-    // Mapping from Lokaal Entity to LokaalResponseDTO with nested Campus Object
+    // Mapping from Lokaal Entity to LokaalResponseDTO WITH nested Campus en Reservatie Object
     @Mapping(target = "campusResponseDTO", source = "campus")
     @Mapping(target = "reservatieResponseDTOs", source = "reservaties")
-    LokaalResponseDTO lokaalToLokaalResponseDTOWithCampus(Lokaal lokaal, CampusResponseDTO campus, ReservatieResponseDTO reservaties);
+    LokaalResponseDTO lokaalToLokaalResponseDTOWithCampusAndReservatie(Lokaal lokaal, CampusResponseDTO campus, ReservatieResponseDTO reservaties);
+
+    // Mapping from Lokaal Entity to lokaalResponseDTO WITHOUT nested Campus but WITH nested Reservatie Object
+    @Mapping(target = "campusResponseDTO", ignore = true)
+    @Mapping(target = "reservatieResponseDTOs", source = "reservaties")
+    LokaalResponseDTO lokaalToLokaalResponseDTOWithReservatie(Lokaal lokaal, ReservatieResponseDTO reservaties);
+
+    // Mapping from Lokaal Entity to LokaalResponseDTO WITHOUT nested reference objects
+    @Mapping(target = "campusResponseDTO", ignore = true)
+    @Mapping(target = "reservatieResponseDTOs", ignore = true)
+    LokaalResponseDTO lokaalToLokaalResponseDTOWithoutCampusAndReservatie(Lokaal lokaal);
+
 
     // Mapping from CreateLokaalDTO to Lokaal Entity
     @Mapping(target = "campus", source = "campus")

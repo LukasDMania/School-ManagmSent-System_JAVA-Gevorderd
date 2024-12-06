@@ -20,6 +20,10 @@ public interface CampusMapper {
     @Mapping(target = "lokalenResponseDTOs", source = "lokalen")
     CampusResponseDTO campusToCampusResponseDTOWithLokalen(Campus campus, List<LokaalResponseDTO> lokalen);
 
+    // Mapping from Campus Entity to CampusResponseDTO without nested LokalenDTO Objects
+    @Mapping(target = "lokalenResponseDTOs", ignore = true)
+    CampusResponseDTO campusToCampusResponseDTOWithoutLokalen(Campus campus);
+
     // Mapping from CampusCreateDTO to Campus Entity
     Campus campusCreateDTOToCampus(CampusCreateDTO campusCreateDTO);
 }
