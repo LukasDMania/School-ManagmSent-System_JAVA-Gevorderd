@@ -1,5 +1,6 @@
 package com.campusmanagment.service.implemented;
 
+import com.campusmanagment.dto.create.CampusCreateDTO;
 import com.campusmanagment.model.Campus;
 import com.campusmanagment.repository.CampusRepository;
 import com.campusmanagment.service.CampusService;
@@ -93,20 +94,19 @@ public class CampusServiceImpl implements CampusService {
 
     @Override
     @Transactional
-    public Campus updateCampus(Campus campus) {
-        if (campus == null || campus.getCampusNaam() == null || campus.getCampusNaam().trim().isEmpty()) {
-            throw new IllegalArgumentException("Campus and CampusNaam cannot be null or empty");
+    public Campus updateCampus(String id, Campus campus) {
+        if (campus == null || id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("Campus and Id cannot be null or empty");
         }
 
         try {
-            Campus existingCampus = campusRepository.findById(campus.getCampusNaam())
-                    .orElseThrow(() -> new IllegalArgumentException("Campus with ID " + campus.getCampusNaam() + " not found"));
+            Campus existingCampus = campusRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Campus with ID " + id + " not found"));
 
             // Update fields
             existingCampus.setCampusNaam(campus.getCampusNaam());
             existingCampus.setAdres(campus.getAdres());
             existingCampus.setParkeerplaatsen(campus.getParkeerplaatsen());
-            existingCampus.setLokalen(campus.getLokalen());
 
             return campusRepository.save(existingCampus);
         } catch (IllegalArgumentException e) {

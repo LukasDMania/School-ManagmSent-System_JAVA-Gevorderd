@@ -25,11 +25,11 @@ public class LokaalCreateDTO {
     private int verdieping;
 
     @NotNull
-    private Long campusId;
+    private String campusId;
 
     // Constructors
     public LokaalCreateDTO() {}
-    public LokaalCreateDTO(String lokaalNaam, LokaalType lokaalType, int capaciteit, int verdieping, Long campusId) {
+    public LokaalCreateDTO(String lokaalNaam, LokaalType lokaalType, int capaciteit, int verdieping, String campusId) {
         this.lokaalNaam = lokaalNaam;
         this.lokaalType = lokaalType;
         this.capaciteit = capaciteit;
@@ -66,10 +66,10 @@ public class LokaalCreateDTO {
         this.verdieping = verdieping;
     }
 
-    public Long getCampusId() {
+    public String getCampusId() {
         return campusId;
     }
-    public void setCampusId(Long campusId) {
+    public void setCampusId(String campusId) {
         this.campusId = campusId;
     }
 

@@ -81,17 +81,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUser(User user) {
-        if (user == null || user.getId() == null || user.getId() <= 0) {
+    public User updateUser(Long id, User user) {
+        if (user == null || id == null || id <= 0) {
             throw new IllegalArgumentException("User or UserId cannot be null or under 0");
         }
 
         try {
-            User existingUser = userRepository.findById(user.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("User with ID " + user.getId() + " not found"));
+            User existingUser = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("User with ID " + id + " not found"));
 
             existingUser.setNaam(user.getNaam());
-            existingUser.setVoorNaam(user.getVoorNaam());
+            existingUser.setVoornaam(user.getVoornaam());
             existingUser.setGeboorteDatum(user.getGeboorteDatum());
             existingUser.setEmail(user.getEmail());
             existingUser.setReservaties(user.getReservaties());

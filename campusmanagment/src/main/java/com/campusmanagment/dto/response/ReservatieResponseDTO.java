@@ -2,14 +2,14 @@ package com.campusmanagment.dto.response;
 
 import com.campusmanagment.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ReservatieResponseDTO {
 
     // Fields
-    private String reservatieNaam;
-    private String startTijdstip;
-    private String eindTijdstip;
+    private LocalDateTime startTijdstip;
+    private LocalDateTime eindTijdstip;
     private String userCommentaar;
 
     // Relations
@@ -18,8 +18,7 @@ public class ReservatieResponseDTO {
 
     // Constructors
     public ReservatieResponseDTO() {}
-    public ReservatieResponseDTO(String reservatieNaam, String startTijdstip, String eindTijdstip, String userCommentaar, UserResponseDTO userResponseDTO, List<LokaalResponseDTO> lokalenResponseDTOs) {
-        this.reservatieNaam = reservatieNaam;
+    public ReservatieResponseDTO(LocalDateTime startTijdstip, LocalDateTime eindTijdstip, String userCommentaar, UserResponseDTO userResponseDTO, List<LokaalResponseDTO> lokalenResponseDTOs) {
         this.startTijdstip = startTijdstip;
         this.eindTijdstip = eindTijdstip;
         this.userCommentaar = userCommentaar;
@@ -27,48 +26,39 @@ public class ReservatieResponseDTO {
         this.lokalenResponseDTOs = lokalenResponseDTOs;
     }
     //  No UserResponseDTO
-    public ReservatieResponseDTO(String reservatieNaam, String startTijdstip, String eindTijdstip, String userCommentaar, List<LokaalResponseDTO> lokalenResponseDTOs) {
-        this.reservatieNaam = reservatieNaam;
+    public ReservatieResponseDTO(LocalDateTime startTijdstip, LocalDateTime eindTijdstip, String userCommentaar, List<LokaalResponseDTO> lokalenResponseDTOs) {
         this.startTijdstip = startTijdstip;
         this.eindTijdstip = eindTijdstip;
         this.userCommentaar = userCommentaar;
         this.lokalenResponseDTOs = lokalenResponseDTOs;
     }
     //  No LokalenResponseDTOs
-    public ReservatieResponseDTO(String reservatieNaam, String startTijdstip, String eindTijdstip, String userCommentaar, UserResponseDTO userResponseDTO) {
-        this.reservatieNaam = reservatieNaam;
+    public ReservatieResponseDTO(LocalDateTime startTijdstip, LocalDateTime eindTijdstip, String userCommentaar, UserResponseDTO userResponseDTO) {
         this.startTijdstip = startTijdstip;
         this.eindTijdstip = eindTijdstip;
         this.userCommentaar = userCommentaar;
         this.userResponseDTO = userResponseDTO;
     }
     //  No UserResponseDTO and LokalenResponseDTOs
-    public ReservatieResponseDTO(String reservatieNaam, String startTijdstip, String eindTijdstip, String userCommentaar) {
-        this.reservatieNaam = reservatieNaam;
+    public ReservatieResponseDTO(LocalDateTime startTijdstip, LocalDateTime eindTijdstip, String userCommentaar) {
         this.startTijdstip = startTijdstip;
         this.eindTijdstip = eindTijdstip;
         this.userCommentaar = userCommentaar;
     }
 
     // Getters and Setters
-    public String getReservatieNaam() {
-        return reservatieNaam;
-    }
-    public void setReservatieNaam(String reservatieNaam) {
-        this.reservatieNaam = reservatieNaam;
-    }
 
-    public String getStartTijdstip() {
+    public LocalDateTime getStartTijdstip() {
         return startTijdstip;
     }
-    public void setStartTijdstip(String startTijdstip) {
+    public void setStartTijdstip(LocalDateTime startTijdstip) {
         this.startTijdstip = startTijdstip;
     }
 
-    public String getEindTijdstip() {
+    public LocalDateTime getEindTijdstip() {
         return eindTijdstip;
     }
-    public void setEindTijdstip(String eindTijdstip) {
+    public void setEindTijdstip(LocalDateTime eindTijdstip) {
         this.eindTijdstip = eindTijdstip;
     }
 
@@ -98,8 +88,7 @@ public class ReservatieResponseDTO {
     @Override
     public String toString() {
         return "ReservatieResponseDTO{" +
-                "reservatieNaam='" + reservatieNaam + '\'' +
-                ", startTijdstip='" + startTijdstip + '\'' +
+                "startTijdstip='" + startTijdstip + '\'' +
                 ", eindTijdstip='" + eindTijdstip + '\'' +
                 ", userCommentaar='" + userCommentaar + '\'' +
                 ", userResponseDTO=" + userResponseDTO +

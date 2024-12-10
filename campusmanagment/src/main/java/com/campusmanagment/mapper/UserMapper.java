@@ -15,9 +15,12 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    // Mapping from User Entity to UserResponseDTO
+    // Mapping from User Entity to UserResponseDTO with nested reservaties
     @Mapping(target = "reservatieResponseDTOs", source = "reservaties")
-    UserResponseDTO userToUserResponseDTO(User user, List<ReservatieResponseDTO> reservaties);
+    UserResponseDTO userToUserResponseDTOWithReservaties(User user, List<ReservatieResponseDTO> reservaties);
+
+    // Mapping from User Entity to UserResponseDTO without reservaties
+    UserResponseDTO userToUserResponseDTOWithoutReservaties(User user);
 
     // Mapping from UserCreateDTO to User Entity
     User userCreateDTOToUser(UserCreateDTO userCreateDTO);

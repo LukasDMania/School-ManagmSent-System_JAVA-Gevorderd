@@ -90,14 +90,14 @@ public class LokaalServiceImpl implements LokaalService {
 
     @Override
     @Transactional
-    public Lokaal updateLokaal(Lokaal lokaal) {
-        if (lokaal == null || lokaal.getId() == null || lokaal.getId() <= 0) {
+    public Lokaal updateLokaal(Long id, Lokaal lokaal) {
+        if (id == null || lokaal == null || id <= 0) {
             throw new IllegalArgumentException("Lokaal or LokaalId cannot be null or under 0");
         }
 
         try {
-            Lokaal existingLokaal = lokaalRepository.findById(lokaal.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + lokaal.getId() + " not found"));
+            Lokaal existingLokaal = lokaalRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + id + " not found"));
 
             existingLokaal.setLokaalNaam(lokaal.getLokaalNaam());
             existingLokaal.setCapaciteit(lokaal.getCapaciteit());

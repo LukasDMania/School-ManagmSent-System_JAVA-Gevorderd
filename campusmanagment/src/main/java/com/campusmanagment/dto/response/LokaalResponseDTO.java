@@ -2,6 +2,7 @@ package com.campusmanagment.dto.response;
 
 import com.campusmanagment.util.LokaalType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LokaalResponseDTO {
@@ -14,7 +15,7 @@ public class LokaalResponseDTO {
 
     // Relations
     private CampusResponseDTO campusResponseDTO;
-    private List<ReservatieResponseDTO> reservatieResponseDTOs;
+    private List<ReservatieResponseDTO> reservatieResponseDTOs = new ArrayList<>();
 
     // Constructors
     public LokaalResponseDTO() {}
@@ -86,10 +87,10 @@ public class LokaalResponseDTO {
         this.campusResponseDTO = campusResponseDTO;
     }
 
-    public List<ReservatieResponseDTO> getReservaties() {
+    public List<ReservatieResponseDTO> getReservatieResponseDTOs() {
         return reservatieResponseDTOs;
     }
-    public void setReservaties(List<ReservatieResponseDTO> reservaties) {
+    public void setReservatiesResponseDTOs1(List<ReservatieResponseDTO> reservaties) {
         this.reservatieResponseDTOs = reservaties;
     }
 

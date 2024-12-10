@@ -2,7 +2,7 @@ package com.campusmanagment.dto.create;
 
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class UserCreateDTO {
 
@@ -13,11 +13,11 @@ public class UserCreateDTO {
 
     @NotBlank(message = "Voornaam is verplicht")
     @Size(min = 1, max = 50, message = "Voornaam is verplicht en moet tussen de 1 en 50 karakters zijn")
-    private String voorNaam;
+    private String voornaam;
 
     @NotNull(message = "Geboortedatum is verplicht")
     @Past(message = "Geboortedatum moet in het verleden zijn")
-    private LocalDateTime geboorteDatum;
+    private LocalDate geboorteDatum;
 
     @NotBlank(message = "Email is verplicht")
     @Email(message = "Email moet een geldig email adres zijn")
@@ -26,9 +26,9 @@ public class UserCreateDTO {
 
     // Constructors
     public UserCreateDTO() {}
-    public UserCreateDTO(String naam, String voorNaam, LocalDateTime geboorteDatum, String email) {
+    public UserCreateDTO(String naam, String voornaam, LocalDate geboorteDatum, String email) {
         this.naam = naam;
-        this.voorNaam = voorNaam;
+        this.voornaam = voornaam;
         this.geboorteDatum = geboorteDatum;
         this.email = email;
     }
@@ -41,17 +41,17 @@ public class UserCreateDTO {
         this.naam = naam;
     }
 
-    public String getVoorNaam() {
-        return voorNaam;
+    public String getVoornaam() {
+        return voornaam;
     }
-    public void setVoorNaam(String voorNaam) {
-        this.voorNaam = voorNaam;
+    public void setVoornaam(String voorNaam) {
+        this.voornaam = voorNaam;
     }
 
-    public LocalDateTime getGeboorteDatum() {
+    public LocalDate getGeboorteDatum() {
         return geboorteDatum;
     }
-    public void setGeboorteDatum(LocalDateTime geboorteDatum) {
+    public void setGeboorteDatum(LocalDate geboorteDatum) {
         this.geboorteDatum = geboorteDatum;
     }
 
@@ -67,7 +67,7 @@ public class UserCreateDTO {
     public String toString() {
         return "UserCreateDTO{" +
                 "naam='" + naam + '\'' +
-                ", voorNaam='" + voorNaam + '\'' +
+                ", voorNaam='" + voornaam + '\'' +
                 ", geboorteDatum=" + geboorteDatum +
                 ", email='" + email + '\'' +
                 '}';

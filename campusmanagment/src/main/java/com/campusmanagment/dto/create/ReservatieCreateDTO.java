@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservatieCreateDTO {
@@ -22,7 +23,7 @@ public class ReservatieCreateDTO {
     private Long userId;
 
     @NotNull(message = "Minstens 1 lokaal moet worden opgegeven")
-    private List<Long> lokalenIds;
+    private List<Long> lokalenIds = new ArrayList<>();
 
     // Constructors
     public ReservatieCreateDTO() {}
@@ -32,6 +33,11 @@ public class ReservatieCreateDTO {
         this.userCommentaar = userCommentaar;
         this.userId = userId;
         this.lokalenIds = lokalenIds;
+    }
+    public ReservatieCreateDTO(LocalDateTime startTijdstip, LocalDateTime eindTijdstip, String userCommentaar){
+        this.startTijdstip = startTijdstip;
+        this.eindTijdstip = eindTijdstip;
+        this.userCommentaar = userCommentaar;
     }
 
     // Getters and Setters

@@ -1,6 +1,8 @@
 package com.campusmanagment.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserResponseDTO {
@@ -8,15 +10,15 @@ public class UserResponseDTO {
     // Fields
     private String naam;
     private String voornaam;
-    private LocalDateTime geboorteDatum;
+    private LocalDate geboorteDatum;
     private String email;
 
     // Relations
-    private List<ReservatieResponseDTO> reservatieResponseDTOs;
+    private List<ReservatieResponseDTO> reservatieResponseDTOs = new ArrayList<>();
 
     // Constructors
     public UserResponseDTO() {}
-    public UserResponseDTO(String naam, String voornaam, LocalDateTime geboorteDatum, String email, List<ReservatieResponseDTO> reservaties) {
+    public UserResponseDTO(String naam, String voornaam, LocalDate geboorteDatum, String email, List<ReservatieResponseDTO> reservaties) {
         this.naam = naam;
         this.voornaam = voornaam;
         this.geboorteDatum = geboorteDatum;
@@ -24,7 +26,7 @@ public class UserResponseDTO {
         this.reservatieResponseDTOs = reservaties;
     }
     //  No Reservaties
-    public UserResponseDTO(String naam, String voornaam, LocalDateTime geboorteDatum, String email) {
+    public UserResponseDTO(String naam, String voornaam, LocalDate geboorteDatum, String email) {
         this.naam = naam;
         this.voornaam = voornaam;
         this.geboorteDatum = geboorteDatum;
@@ -46,10 +48,10 @@ public class UserResponseDTO {
         this.voornaam = voornaam;
     }
 
-    public LocalDateTime getGeboorteDatum() {
+    public LocalDate getGeboorteDatum() {
         return geboorteDatum;
     }
-    public void setGeboorteDatum(LocalDateTime geboorteDatum) {
+    public void setGeboorteDatum(LocalDate geboorteDatum) {
         this.geboorteDatum = geboorteDatum;
     }
 

@@ -8,6 +8,6 @@ public interface ReservatieService {
     List<Reservatie> getAllReservaties();
     Reservatie getReservatieById(Long id);
     Reservatie addReservatie(Reservatie reservatie);
-    Reservatie updateReservatie(Reservatie reservatie);
+    Reservatie updateReservatie(Long id, Reservatie reservatie);
     void deleteReservatie(Long id);
 }

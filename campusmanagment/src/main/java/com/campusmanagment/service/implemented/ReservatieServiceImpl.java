@@ -83,14 +83,22 @@ public class ReservatieServiceImpl implements ReservatieService {
 
     @Override
     @Transactional
-    public Reservatie updateReservatie(Reservatie reservation) {
-        if (reservation == null || reservation.getId() == null || reservation.getId() <= 0) {
+    public Reservatie updateReservatie(Long id, Reservatie reservation) {
+        if (reservation == null || id == null || id <= 0) {
             throw new IllegalArgumentException("Reservation or ReservationId cannot be null or under 0");
         }
 
         try {
-            Reservatie existingReservatie = reservationRepository.findById(reservation.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + reservation.getId() + " not found"));
+            Reservatie existingReservatie = reservationRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + id + " not found"));
+
+            existingReservatie.setStartTijdstip(reservation.getStartTijdstip());
+            existingReservatie.setEindTijdstip(reservation.getEindTijdstip());
+            existingReservatie.setUserCommentaar(reservation.getUserCommentaar());
+            existingReservatie.setMaxCapaciteit(reservation.getMaxCapaciteit());
+            existingReservatie.setLokalen(reservation.getLokalen());
+            existingReservatie.setUser(reservation.getUser());
+
 
             return reservationRepository.save(existingReservatie);
         } catch (IllegalArgumentException e) {
