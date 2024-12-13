@@ -1,5 +1,6 @@
 package com.campusmanagment.service.implemented;
 
+import com.campusmanagment.model.Lokaal;
 import com.campusmanagment.model.Reservatie;
 import com.campusmanagment.repository.ReservatieRepository;
 import com.campusmanagment.service.ReservatieService;
@@ -7,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -67,6 +69,9 @@ public class ReservatieServiceImpl implements ReservatieService {
             throw new IllegalArgumentException("Reservation cannot be null");
         }
 
+        validateReservationTimes(reservation);
+        validateLokaalAvailability(reservation);
+
         try {
             return reservationRepository.save(reservation);
         } catch (IllegalArgumentException e) {
@@ -78,6 +83,30 @@ public class ReservatieServiceImpl implements ReservatieService {
         } catch (Exception e) {
             logger.severe("An uncaught error occurred while adding reservation: " + e.getMessage());
             throw new RuntimeException("Failed to add reservation due to an unexpected error", e);
+        }
+    }
+    private void validateReservationTimes(Reservatie reservation) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (reservation.getStartTijdstip().isAfter(reservation.getEindTijdstip())) {
+            throw new IllegalArgumentException("Start time must be before end time");
+        }
+
+        if (reservation.getEindTijdstip().isBefore(now) || reservation.getStartTijdstip().isBefore(now)) {
+            throw new IllegalArgumentException("Reservation end time cannot be in the past");
+        }
+    }
+    private void validateLokaalAvailability(Reservatie reservation) {
+        for (Lokaal lokaal : reservation.getLokalen()) {
+            List<Reservatie> conflictingReservaties = reservationRepository.findOverlappingReservations(
+                    lokaal.getId(),
+                    reservation.getStartTijdstip(),
+                    reservation.getEindTijdstip()
+            );
+
+            if (!conflictingReservaties.isEmpty()) {
+                throw new IllegalArgumentException("Lokaal is not available at that time");
+            }
         }
     }
 

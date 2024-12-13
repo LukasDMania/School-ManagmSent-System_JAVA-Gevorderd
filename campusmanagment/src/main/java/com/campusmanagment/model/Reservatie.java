@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,7 +40,7 @@ public class Reservatie {
             joinColumns = @JoinColumn(name = "reservatie_id"),
             inverseJoinColumns = @JoinColumn(name = "lokaal_id")
     )
-    private List<Lokaal> lokalen;
+    private List<Lokaal> lokalen = new ArrayList<>();
 
     // Max capaciteit van de lokalen
     @Transient

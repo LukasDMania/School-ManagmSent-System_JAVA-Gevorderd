@@ -1,8 +1,7 @@
 package com.campusmanagment.service.implemented;
 
-import com.campusmanagment.mapper.LokaalMapper;
-import com.campusmanagment.model.Campus;
 import com.campusmanagment.model.Lokaal;
+import com.campusmanagment.repository.CampusRepository;
 import com.campusmanagment.repository.LokaalRepository;
 import com.campusmanagment.service.LokaalService;
 import jakarta.transaction.Transactional;
@@ -21,7 +20,7 @@ public class LokaalServiceImpl implements LokaalService {
     // Logger
     private final Logger logger = Logger.getLogger(LokaalServiceImpl.class.getName());
 
-    public LokaalServiceImpl(LokaalRepository lokaalRepository) {
+    public LokaalServiceImpl(LokaalRepository lokaalRepository, CampusRepository campusRepository, CampusServiceImpl campusService) {
         this.lokaalRepository = lokaalRepository;
     }
 
@@ -93,6 +92,10 @@ public class LokaalServiceImpl implements LokaalService {
     public Lokaal addLokaal(Lokaal lokaal) {
         if (lokaal == null) {
             throw new IllegalArgumentException("Lokaal cannot be null");
+        }
+
+        if (lokaalRepository.existsByLokaalNaamAndCampus(lokaal.getLokaalNaam(), lokaal.getCampus())) {
+            throw new IllegalArgumentException("A Lokaal with this name already exists in the specified campus");
         }
 
         try {

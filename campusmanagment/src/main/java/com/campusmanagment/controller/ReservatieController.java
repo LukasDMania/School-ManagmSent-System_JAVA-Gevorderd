@@ -13,6 +13,11 @@ import com.campusmanagment.model.User;
 import com.campusmanagment.service.implemented.LokaalServiceImpl;
 import com.campusmanagment.service.implemented.ReservatieServiceImpl;
 import com.campusmanagment.service.implemented.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +54,13 @@ public class ReservatieController {
     }
 
     @GetMapping
+    @Operation(summary = "Retrieve all reservations")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of reservations",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReservatieResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<List<ReservatieResponseDTO>> getAllReservaties() {
         List<Reservatie> reservaties = reservatieService.getAllReservaties();
 
@@ -67,6 +79,14 @@ public class ReservatieController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Retrieve a reservation by id", description = "Returns a reservation with its relation user and lokalen")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved reservation",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReservatieResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Reservation not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<ReservatieResponseDTO> getReservatieById(@PathVariable Long id){
         Reservatie reservatie = reservatieService.getReservatieById(id);
 
@@ -82,6 +102,15 @@ public class ReservatieController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new reservation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully created reservation",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReservatieResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User or lokaal not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<ReservatieResponseDTO> createReservatie(@Valid @RequestBody ReservatieCreateDTO reservatieCreateDTO) {
         User user = userService.getUserById(reservatieCreateDTO.getUserId());
         List<Lokaal> lokalen = reservatieCreateDTO.getLokalenIds()
@@ -96,14 +125,23 @@ public class ReservatieController {
         ReservatieResponseDTO reservatieResponseDTO = reservatieMapper.reservatieToReservatieResponseDTOWithUserAndLokalen(createdReservatie,
                 userMapper.userToUserResponseDTOWithoutReservaties(createdReservatie.getUser()),
                 createdReservatie.getLokalen()
-                     .stream()
-                     .map(lokaalMapper::lokaalToLokaalResponseDTOWithoutCampusAndReservatie)
-                     .toList());
+                        .stream()
+                        .map(lokaalMapper::lokaalToLokaalResponseDTOWithoutCampusAndReservatie)
+                        .toList());
 
         return ResponseEntity.ok(reservatieResponseDTO);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing reservation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated reservation",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReservatieResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Reservation, user, or lokaal not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<ReservatieResponseDTO> updateReservatie(@PathVariable Long id, @Valid @RequestBody ReservatieCreateDTO reservatieCreateDTO) {
         Reservatie reservatie = reservatieMapper.reservatieCreateDTOToReservatie(reservatieCreateDTO, userService.getUserById(reservatieCreateDTO.getUserId()),
                 reservatieCreateDTO.getLokalenIds()
@@ -124,6 +162,12 @@ public class ReservatieController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a reservation", description = "Deletes a reservation by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted reservation"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<Void> deleteReservatie(@PathVariable Long id) {
         reservatieService.deleteReservatie(id);
         return ResponseEntity.noContent().build();

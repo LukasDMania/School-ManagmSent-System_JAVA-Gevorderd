@@ -34,7 +34,7 @@ class ReservatieServiceImplTest {
     void setUp(){
         reservatie = new Reservatie();
         reservatie.setId(1L);
-        reservatie.setStartTijdstip(LocalDateTime.now());
+        reservatie.setStartTijdstip(LocalDateTime.now().plusHours(1L));
         reservatie.setEindTijdstip(LocalDateTime.now().plusHours(2L));
         reservatie.setUserCommentaar("userCommentaar");
     }

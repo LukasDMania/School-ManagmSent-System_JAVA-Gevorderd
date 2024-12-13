@@ -42,7 +42,6 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred: " + ex.getMessage()
         );
     }
-
     private ResponseEntity<Map<String, Object>> createErrorResponse(
             HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<>();
