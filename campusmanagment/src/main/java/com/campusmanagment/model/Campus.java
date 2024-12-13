@@ -46,7 +46,7 @@ public class Campus {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private List<Lokaal> lokalen;
+    private List<Lokaal> lokalen = new ArrayList<>();
 
     // Constructors
     public Campus() {}

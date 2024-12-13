@@ -71,7 +71,8 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserCreateDTO userCreateDTO) {
         User userToUpdate = userMapper.userCreateDTOToUser(userCreateDTO);
-
+        User existingUser = userService.getUserById(id);
+        userToUpdate.setReservaties(userService.getUserByNaamAndVoornaam(existingUser.getNaam(), existingUser.getVoornaam()).getReservaties());
         User updatedUser = userService.updateUser(id, userToUpdate);
 
         UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTOWithoutReservaties(updatedUser);

@@ -66,6 +66,27 @@ public class LokaalServiceImpl implements LokaalService {
         }
     }
 
+    @Override
+    public Lokaal getLokaalByNaam(String lokaalNaam) {
+        if (lokaalNaam == null) {
+            throw new IllegalArgumentException("Lokaal ID cannot be null");
+        }
+
+        try {
+            return lokaalRepository.findByLokaalNaam(lokaalNaam)
+                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + lokaalNaam + " not found"));
+        } catch (IllegalArgumentException e) {
+            logger.warning("Couldn't fetch lokaal: " + e.getMessage());
+            throw e;
+        } catch (DataAccessException e) {
+            logger.severe("Database error occurred while fetching lokaal with ID " + lokaalNaam + ": " + e.getMessage());
+            throw new RuntimeException("Failed to fetch lokaal with ID " + lokaalNaam, e);
+        } catch (Exception e) {
+            logger.severe("An unexpected error occurred while fetching lokaal with ID " + lokaalNaam + ": " + e.getMessage());
+            throw new RuntimeException("Failed to fetch lokaal with ID " + lokaalNaam, e);
+        }
+    }
+
 
     @Override
     @Transactional

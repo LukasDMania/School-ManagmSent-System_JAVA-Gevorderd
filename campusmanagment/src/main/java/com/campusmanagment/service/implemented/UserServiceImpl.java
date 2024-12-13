@@ -5,10 +5,12 @@ import com.campusmanagment.repository.UserRepository;
 import com.campusmanagment.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.logging.Logger;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -59,9 +61,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByNaamAndVoornaam(String naam, String voornaam) {
+        if (naam == null || voornaam == null) {
+            throw new IllegalArgumentException(naam + " and " + voornaam + " cannot be null");
+        }
+
+        try {
+            return userRepository.getUserByNaamAndVoornaam(naam, voornaam)
+                    .orElseThrow(() -> new IllegalArgumentException("User with naam " + naam + " not found"));
+        } catch (IllegalArgumentException e) {
+            logger.warning("Couldn't fetch user: " + e.getMessage());
+            throw e;
+        } catch (DataAccessException e) {
+            logger.severe("Database error occurred while fetching user with naam " + naam);
+            throw new RuntimeException("Failed to fetch user with ID " + naam, e);
+        } catch (Exception e) {
+            logger.severe("An uncaught error occurred while fetching user with naam " + naam);
+            throw new RuntimeException("Failed to fetch user with ID " + naam, e);
+        }
+    }
+
+    @Override
     @Transactional
     public User addUser(User user) {
-        if (user == null) {
+        if (user == null || user.getNaam() == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
 

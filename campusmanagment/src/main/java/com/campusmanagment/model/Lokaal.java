@@ -40,7 +40,7 @@ public class Lokaal {
     @NotNull(message = "Campus moet worden opgegeven")
     private Campus campus;
 
-    @ManyToMany(mappedBy = "lokalen", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "lokalen", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Reservatie> reservaties;
 
     // Constructors
