@@ -102,7 +102,7 @@ public class CampusController {
     @Operation(summary = "Update an existing campus")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated campus",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType  = "application/json",
                     schema = @Schema(implementation = CampusResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "Campus not found"),
