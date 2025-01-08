@@ -1,5 +1,8 @@
 package com.campusmanagement.service.implemented;
 
+import com.campusmanagement.exception.lokaal.InvalidLokaalDataException;
+import com.campusmanagement.exception.lokaal.LokaalNotFoundException;
+import com.campusmanagement.exception.lokaal.LokaalOperationException;
 import com.campusmanagement.model.Lokaal;
 import com.campusmanagement.repository.CampusRepository;
 import com.campusmanagement.repository.LokaalRepository;
@@ -33,10 +36,7 @@ public class LokaalServiceImpl implements LokaalService {
             return lokalen;
         } catch (DataAccessException e) {
             LOGGER.severe("An error occurred while fetching lokalen");
-            throw new RuntimeException("Failed to fetch lokalen", e);
-        } catch (Exception e) {
-            LOGGER.severe("An unexpected error occurred while fetching lokalen: " + e.getMessage());
-            throw new RuntimeException("Failed to fetch lokalen", e);
+            throw new LokaalOperationException("Failed to fetch lokalen", e);
         }
     }
 
@@ -44,42 +44,30 @@ public class LokaalServiceImpl implements LokaalService {
     @Override
     public Lokaal getLokaalById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("Lokaal ID cannot be null");
+            throw new InvalidLokaalDataException("Lokaal ID cannot be null");
         }
 
         try {
             return lokaalRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + id + " not found"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Couldn't fetch lokaal: " + e.getMessage());
-            throw e;
+                    .orElseThrow(() -> new LokaalNotFoundException("Lokaal with ID " + id + " not found"));
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while fetching lokaal with ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to fetch lokaal with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An unexpected error occurred while fetching lokaal with ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to fetch lokaal with ID " + id, e);
+            throw new LokaalOperationException("Failed to fetch lokaal with ID " + id, e);
         }
     }
 
     @Override
     public Lokaal getLokaalByNaam(String lokaalNaam) {
         if (lokaalNaam == null) {
-            throw new IllegalArgumentException("Lokaal ID cannot be null");
+            throw new InvalidLokaalDataException("Lokaal ID cannot be null");
         }
 
         try {
             return lokaalRepository.findByLokaalNaam(lokaalNaam)
-                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + lokaalNaam + " not found"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Couldn't fetch lokaal: " + e.getMessage());
-            throw e;
+                    .orElseThrow(() -> new LokaalNotFoundException("Lokaal with ID " + lokaalNaam + " not found"));
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while fetching lokaal with ID " + lokaalNaam + ": " + e.getMessage());
-            throw new RuntimeException("Failed to fetch lokaal with ID " + lokaalNaam, e);
-        } catch (Exception e) {
-            LOGGER.severe("An unexpected error occurred while fetching lokaal with ID " + lokaalNaam + ": " + e.getMessage());
-            throw new RuntimeException("Failed to fetch lokaal with ID " + lokaalNaam, e);
+            throw new LokaalOperationException("Failed to fetch lokaal with ID " + lokaalNaam, e);
         }
     }
 
@@ -88,24 +76,18 @@ public class LokaalServiceImpl implements LokaalService {
     @Transactional
     public Lokaal addLokaal(Lokaal lokaal) {
         if (lokaal == null) {
-            throw new IllegalArgumentException("Lokaal cannot be null");
+            throw new InvalidLokaalDataException("Lokaal cannot be null");
         }
 
         if (lokaalRepository.existsByLokaalNaamAndCampus(lokaal.getLokaalNaam(), lokaal.getCampus())) {
-            throw new IllegalArgumentException("A Lokaal with this name already exists in the specified campus");
+            throw new InvalidLokaalDataException("A Lokaal with this name already exists in the specified campus");
         }
 
         try {
             return lokaalRepository.save(lokaal);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Adding lokaal failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while adding lokaal: " + e.getMessage());
-            throw new RuntimeException("Failed to add lokaal due to a database error", e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while adding lokaal: " + e.getMessage());
-            throw new RuntimeException("Failed to add lokaal due to an unexpected error", e);
+            throw new LokaalOperationException("Failed to add lokaal due to a database error", e);
         }
     }
 
@@ -113,12 +95,12 @@ public class LokaalServiceImpl implements LokaalService {
     @Transactional
     public Lokaal updateLokaal(Long id, Lokaal lokaal) {
         if (id == null || lokaal == null || id <= 0) {
-            throw new IllegalArgumentException("Lokaal or LokaalId cannot be null or under 0");
+            throw new InvalidLokaalDataException("Lokaal or LokaalId cannot be null or under 0");
         }
 
         try {
             Lokaal existingLokaal = lokaalRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Lokaal with ID " + id + " not found"));
+                    .orElseThrow(() -> new LokaalNotFoundException("Lokaal with ID " + id + " not found"));
 
             existingLokaal.setLokaalNaam(lokaal.getLokaalNaam());
             existingLokaal.setCapaciteit(lokaal.getCapaciteit());
@@ -127,15 +109,9 @@ public class LokaalServiceImpl implements LokaalService {
             existingLokaal.setCampus(lokaal.getCampus());
 
             return lokaalRepository.save(existingLokaal);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Lokaal update failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("Database issue while updating lokaal with ID:  " + lokaal.getId());
-            throw new RuntimeException("Failed to update lokaal with ID " + lokaal.getId(), e);
-        } catch (Exception e) {
-            LOGGER.severe("An error occurred while updating lokaal with ID " + lokaal.getId() + ": " + e.getMessage());
-            throw new RuntimeException("Failed to update lokaal with ID " + lokaal.getId(), e);
+            throw new LokaalOperationException("Failed to update lokaal with ID " + lokaal.getId(), e);
         }
     }
 
@@ -143,26 +119,20 @@ public class LokaalServiceImpl implements LokaalService {
     @Transactional
     public void deleteLokaal(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("Lokaal ID cannot be null");
+            throw new InvalidLokaalDataException("Lokaal ID cannot be null");
         }
 
         try {
             if (!lokaalRepository.existsById(id)) {
-                throw new IllegalArgumentException("Lokaal with ID " + id + " does not exist");
+                throw new LokaalNotFoundException("Lokaal with ID " + id + " does not exist");
             }
 
             lokaalRepository.deleteById(id);
             LOGGER.info("Lokaal with ID " + id + " deleted successfully");
 
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Lokaal deletion failedD " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("A database error occurred while deleting lokaal with ID " + id);
-            throw new RuntimeException("Failed to delete lokaal with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while deleting lokaal with ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to delete lokaal with ID " + id, e);
+            throw new LokaalOperationException("Failed to delete lokaal with ID " + id, e);
         }
     }
 }

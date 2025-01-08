@@ -1,5 +1,8 @@
 package com.campusmanagement.service.implemented;
 
+import com.campusmanagement.exception.reservatie.InvalidReservatieDataException;
+import com.campusmanagement.exception.reservatie.ReservatieNotFoundException;
+import com.campusmanagement.exception.reservatie.ReservatieOperationException;
 import com.campusmanagement.model.Lokaal;
 import com.campusmanagement.model.Reservatie;
 import com.campusmanagement.repository.ReservatieRepository;
@@ -34,31 +37,22 @@ public class ReservatieServiceImpl implements ReservatieService {
             return reservations;
         } catch (DataAccessException e) {
             LOGGER.severe("A Database error occurred while fetching reservations");
-            throw new RuntimeException("Failed to fetch reservations", e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while fetching reservations: " + e.getMessage());
-            throw new RuntimeException("Failed to fetch reservations", e);
+            throw new ReservatieOperationException("Failed to fetch reservations", e);
         }
     }
 
     @Override
     public Reservatie getReservatieById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("Reservation ID cannot be null");
+            throw new InvalidReservatieDataException("Reservation ID cannot be null");
         }
 
         try {
             return reservationRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + id + " not found"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Couldn't fetch reservation: " + e.getMessage());
-            throw e;
+                    .orElseThrow(() -> new ReservatieNotFoundException("Reservation with ID " + id + " not found"));
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while fetching reservation with ID " + id);
-            throw new RuntimeException("Failed to fetch reservation with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while fetching reservation with ID " + id);
-            throw new RuntimeException("Failed to fetch reservation with ID " + id, e);
+            throw new ReservatieOperationException("Failed to fetch reservation with ID " + id, e);
         }
     }
 
@@ -66,7 +60,7 @@ public class ReservatieServiceImpl implements ReservatieService {
     @Transactional
     public Reservatie addReservatie(Reservatie reservation) {
         if (reservation == null) {
-            throw new IllegalArgumentException("Reservation cannot be null");
+            throw new InvalidReservatieDataException("Reservation cannot be null");
         }
 
         validateReservationTimes(reservation);
@@ -74,15 +68,9 @@ public class ReservatieServiceImpl implements ReservatieService {
 
         try {
             return reservationRepository.save(reservation);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Adding reservation failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while adding reservation: " + e.getMessage());
-            throw new RuntimeException("Failed to add reservation due to a database error", e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while adding reservation: " + e.getMessage());
-            throw new RuntimeException("Failed to add reservation due to an unexpected error", e);
+            throw new ReservatieOperationException("Failed to add reservation due to a database error", e);
         }
     }
     private void validateReservationTimes(Reservatie reservation) {
@@ -114,12 +102,12 @@ public class ReservatieServiceImpl implements ReservatieService {
     @Transactional
     public Reservatie updateReservatie(Long id, Reservatie reservation) {
         if (reservation == null || id == null || id <= 0) {
-            throw new IllegalArgumentException("Reservation or ReservationId cannot be null or under 0");
+            throw new InvalidReservatieDataException("Reservation or ReservationId cannot be null or under 0");
         }
 
         try {
             Reservatie existingReservatie = reservationRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + id + " not found"));
+                    .orElseThrow(() -> new ReservatieNotFoundException("Reservation with ID " + id + " not found"));
 
             existingReservatie.setStartTijdstip(reservation.getStartTijdstip());
             existingReservatie.setEindTijdstip(reservation.getEindTijdstip());
@@ -130,15 +118,9 @@ public class ReservatieServiceImpl implements ReservatieService {
 
 
             return reservationRepository.save(existingReservatie);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Reservation update failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("A Database issue while updating reservation with ID:  " + reservation.getId());
-            throw new RuntimeException("Failed to update reservation with ID " + reservation.getId(), e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while updating reservation with ID " + reservation.getId() + ": " + e.getMessage());
-            throw new RuntimeException("Failed to update reservation with ID " + reservation.getId(), e);
+            throw new ReservatieOperationException("Failed to update reservation with ID " + reservation.getId(), e);
         }
     }
 
@@ -146,26 +128,19 @@ public class ReservatieServiceImpl implements ReservatieService {
     @Transactional
     public void deleteReservatie(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("Reservation ID cannot be null");
+            throw new InvalidReservatieDataException("Reservation ID cannot be null");
         }
 
         try {
             if (!reservationRepository.existsById(id)) {
-                throw new IllegalArgumentException("Reservation with ID " + id + " does not exist");
+                throw new ReservatieNotFoundException("Reservation with ID " + id + " does not exist");
             }
 
             reservationRepository.deleteById(id);
             LOGGER.info("Reservation with ID " + id + " deleted successfully");
-
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Reservation deletion failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("A database error occurred while deleting reservation with ID " + id);
-            throw new RuntimeException("Failed to delete reservation with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while deleting reservation with ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to delete reservation with ID " + id, e);
+            throw new ReservatieOperationException("Failed to delete reservation with ID " + id, e);
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.campusmanagement.service.implemented;
 
+import com.campusmanagement.exception.user.InvalidUserDataException;
+import com.campusmanagement.exception.user.UserNotFoundException;
+import com.campusmanagement.exception.user.UserOperationException;
 import com.campusmanagement.model.User;
 import com.campusmanagement.repository.UserRepository;
 import com.campusmanagement.service.UserService;
@@ -32,52 +35,37 @@ public class UserServiceImpl implements UserService {
             return users;
         } catch (DataAccessException e) {
             LOGGER.severe("A Database error occurred while fetching users");
-            throw new RuntimeException("Failed to fetch users", e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while fetching users: " + e.getMessage());
-            throw new RuntimeException("Failed to fetch users", e);
+            throw new UserOperationException("Failed to fetch users", e);
         }
     }
 
     @Override
     public User getUserById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
+            throw new InvalidUserDataException("User ID cannot be null");
         }
 
         try {
             return userRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User with ID " + id + " not found"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Couldn't fetch user: " + e.getMessage());
-            throw e;
+                    .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while fetching user with ID " + id);
-            throw new RuntimeException("Failed to fetch user with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while fetching user with ID " + id);
-            throw new RuntimeException("Failed to fetch user with ID " + id, e);
+            throw new UserOperationException("Failed to fetch user with ID " + id, e);
         }
     }
 
     @Override
     public User getUserByNaamAndVoornaam(String naam, String voornaam) {
         if (naam == null || voornaam == null) {
-            throw new IllegalArgumentException(naam + " and " + voornaam + " cannot be null");
+            throw new InvalidUserDataException(naam + " and " + voornaam + " cannot be null");
         }
 
         try {
             return userRepository.getUserByNaamAndVoornaam(naam, voornaam)
-                    .orElseThrow(() -> new IllegalArgumentException("User with naam " + naam + " not found"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Couldn't fetch user: " + e.getMessage());
-            throw e;
+                    .orElseThrow(() -> new UserNotFoundException("User with naam " + naam + " not found"));
         } catch (DataAccessException e) {
             LOGGER.severe("Database error occurred while fetching user with naam " + naam);
-            throw new RuntimeException("Failed to fetch user with ID " + naam, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while fetching user with naam " + naam);
-            throw new RuntimeException("Failed to fetch user with ID " + naam, e);
+            throw new UserOperationException("Failed to fetch user with ID " + naam, e);
         }
     }
 
@@ -85,20 +73,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User addUser(User user) {
         if (user == null || user.getNaam() == null) {
-            throw new IllegalArgumentException("User cannot be null");
+            throw new InvalidUserDataException("User cannot be null");
         }
 
         try {
             return userRepository.save(user);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("Adding user failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("A Database error occurred while adding user: " + e.getMessage());
-            throw new RuntimeException("Failed to add user due to a database error", e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while adding user: " + e.getMessage());
-            throw new RuntimeException("Failed to add user due to an unexpected error", e);
+            throw new UserOperationException("Failed to add user due to a database error", e);
         }
     }
 
@@ -106,12 +88,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User updateUser(Long id, User user) {
         if (user == null || id == null || id <= 0) {
-            throw new IllegalArgumentException("User or UserId cannot be null or under 0");
+            throw new InvalidUserDataException("User or UserId cannot be null or under 0");
         }
 
         try {
             User existingUser = userRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User with ID " + id + " not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
 
             existingUser.setNaam(user.getNaam());
             existingUser.setVoornaam(user.getVoornaam());
@@ -120,15 +102,9 @@ public class UserServiceImpl implements UserService {
             existingUser.setReservaties(user.getReservaties());
 
             return userRepository.save(existingUser);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("User update failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("Database issue while updating user with ID:  " + user.getId());
-            throw new RuntimeException("Failed to update user with ID " + user.getId(), e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while updating user with ID " + user.getId() + ": " + e.getMessage());
-            throw new RuntimeException("Failed to update user with ID " + user.getId(), e);
+            throw new UserOperationException("Failed to update user with ID " + user.getId(), e);
         }
     }
 
@@ -136,26 +112,19 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
+            throw new InvalidUserDataException("User ID cannot be null");
         }
 
         try {
             if (!userRepository.existsById(id)) {
-                throw new IllegalArgumentException("User with ID " + id + " does not exist");
+                throw new UserNotFoundException("User with ID " + id + " does not exist");
             }
 
             userRepository.deleteById(id);
             LOGGER.info("User with ID " + id + " deleted successfully");
-
-        } catch (IllegalArgumentException e) {
-            LOGGER.warning("User deletion failed: " + e.getMessage());
-            throw e;
         } catch (DataAccessException e) {
             LOGGER.severe("A database error occurred while deleting user with ID " + id);
-            throw new RuntimeException("Failed to delete user with ID " + id, e);
-        } catch (Exception e) {
-            LOGGER.severe("An uncaught error occurred while deleting user with ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to delete user with ID " + id, e);
+            throw new UserOperationException("Failed to delete user with ID " + id, e);
         }
     }
 }
